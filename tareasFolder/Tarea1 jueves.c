@@ -10,7 +10,7 @@
 /* - generacion de random: generar en el while para que no sea predecible
  * - ledResultado: funcion para mostrar resultado con los leds
  * - printf comentado para buildear
- *
+ * - usar P0.5-P0.3 como salidas a pesar del enunciado
  */
 
 #ifdef __USE_CMSIS
@@ -23,7 +23,8 @@
 // TODO: insert other definitions and declarations here
 int zbrun;
 
-void delay();
+void delayShowResult();
+void delayRebote();
 void ledResultado(int);
 int main(void) {
 
@@ -43,7 +44,7 @@ int main(void) {
     LPC_PINCON -> PINMODE0 |= (0x3F);   //pull down res en los primeros 3 pines - logica positiva
 
     LPC_GPIO0 -> FIODIR &= ~(0x7);		//entrada en los primeros 3 pines
-    LPC_GPIO0 -> FIODIR |= (0b111 << 4);	//salida en los segundos 3 pines
+    LPC_GPIO0 -> FIODIR |= (0b111 << 3);	//salida en los segundos 3 pines
 
     while(1)
     {
@@ -52,6 +53,10 @@ int main(void) {
 			cata++;
     		random= cata%3;
     	}while(zbrun==0);
+    	delayRebote();
+    	if (zbrun != LPC_GPIO0-> FIOPIN & (0b111)){
+    		continue;
+    	}
     	bruno=mapa[zbrun];
     	if(bruno==-1){
     		continue;
@@ -73,4 +78,8 @@ void ledResultado(int x){
 
 void delayShowResult(){
 	for(uint32_t i=0;i<4000000;i++);
+}
+
+void delayRebote(){
+	for(uint32_t i=0;i<40000;i++);
 }
