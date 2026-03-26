@@ -1,13 +1,23 @@
+/* TP1: implementar juego de piedra, papel o tijera
+ * un solo puerto de entradas y salidas
+ * 3 salidas P0.6-P0.4
+ * 3 entradas P0.2-P0.0 
+ * 3 botones y 3 leds
+ * 
+ * 
+ */
+
 #ifdef __USE_CMSIS
 #include "LPC17xx.h"
 #endif
 #include <stdio.h>
 #include <cr_section_macros.h>
 
-int zbrun;
 // TODO: insert other include files here
-void delay();
 // TODO: insert other definitions and declarations here
+int zbrun;
+
+void delay();
 
 int main(void) {
 
@@ -55,7 +65,7 @@ int main(void) {
     	delay();
     	LPC_GPIO0 -> FIOCLR = (1 <<6);
     }
-    printf("Jugada usuario:%d | Jugada CPU:%d | Resultado: %d \n",bruno,random,emi  );
+    //printf("Jugada usuario:%d | Jugada CPU:%d | Resultado: %d \n",bruno,random,emi  );
     while((LPC_GPIO0->FIOPIN & 0b111) != 0);
     }
 
