@@ -3,12 +3,13 @@
  * 3 salidas P0.6-P0.4
  * 3 entradas P0.2-P0.0
  * 3 botones y 3 leds
+ * logica positiva
  *
  */
 
 /* - generacion de random: generar en el while para que no sea predecible
  * - ledResultado: funcion para mostrar resultado con los leds
- * -
+ * - printf comentado para buildear
  *
  */
 
@@ -65,11 +66,11 @@ int main(void) {
     return 0 ;
 }
 void ledResultado(int x){
-	LPC_GPIO0 -> FIOSET = (1 << 4+x);	
-	delay();
+	LPC_GPIO0 -> FIOSET = (1 << 4+x);
+	delayShowResult();
 	LPC_GPIO0 -> FIOCLR = (1 << 4+x);
 }
 
-void delay(){
+void delayShowResult(){
 	for(uint32_t i=0;i<4000000;i++);
 }
