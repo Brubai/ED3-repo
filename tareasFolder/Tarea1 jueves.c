@@ -11,6 +11,12 @@
  * - ledResultado: funcion para mostrar resultado con los leds
  * - printf comentado para buildear
  * - usar P0.5-P0.3 como salidas a pesar del enunciado
+ * - configurar P0.5-P0.3 como salidas
+ * - funcion lecturaPines
+ * - funcion configPines
+ * - funcion delayShowResult
+ * - funcion delayRebote
+ * - funcion ledResultado
  */
 
 #ifdef __USE_CMSIS
