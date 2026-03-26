@@ -23,9 +23,11 @@
 // TODO: insert other definitions and declarations here
 int zbrun;
 
+void configPines(void);
 void delayShowResult();
 void delayRebote();
 void ledResultado(int);
+uint8_t lecturaPines();
 int main(void) {
 
 	int cata=0;
@@ -38,23 +40,17 @@ int main(void) {
 	        {-1, 1, 0}};
 	int emi;
 
-
-    LPC_PINCON -> PINSEL0 &= ~(0xFFF);	//GPIO en los primeros 6 pines
-
-    LPC_PINCON -> PINMODE0 |= (0x3F);   //pull down res en los primeros 3 pines - logica positiva
-
-    LPC_GPIO0 -> FIODIR &= ~(0x7);		//entrada en los primeros 3 pines
-    LPC_GPIO0 -> FIODIR |= (0b111 << 3);	//salida en los segundos 3 pines
+	configPines();
 
     while(1)
     {
     	do{
-    		zbrun = LPC_GPIO0-> FIOPIN & (0b111);
+    		zbrun = lecturaPines();
 			cata++;
     		random= cata%3;
     	}while(zbrun==0);
     	delayRebote();
-    	if (zbrun != LPC_GPIO0-> FIOPIN & (0b111)){
+    	if (zbrun != lecturaPines()){
     		continue;
     	}
     	bruno=mapa[zbrun];
@@ -66,10 +62,23 @@ int main(void) {
 		ledResultado(emi);
 
 		//printf("Jugada usuario:%d | Jugada CPU:%d | Resultado: %d \n",bruno,random,emi  );
-		while((LPC_GPIO0->FIOPIN & 0b111) != 0);
+		while((lecturaPines()) != 0);
+		delayRebote();
     }
     return 0 ;
 }
+
+uint8_t lecturaPines(){
+	return LPC_GPIO0-> FIOPIN0 & (0b111);
+}
+
+void configPines(){
+    LPC_PINCON -> PINSEL0 &= ~(0xFFF);	//GPIO en los primeros 6 pines
+    LPC_PINCON -> PINMODE0 |= (0x3F);   //pull down res en los primeros 3 pines - logica positiva
+    LPC_GPIO0 -> FIODIR &= ~(0x7);		//entrada en los primeros 3 pines
+    LPC_GPIO0 -> FIODIR |= (0b111 << 3);	//salida en los segundos 3 pines
+}
+
 void ledResultado(int x){
 	LPC_GPIO0 -> FIOSET = (1 << 4+x);
 	delayShowResult();
