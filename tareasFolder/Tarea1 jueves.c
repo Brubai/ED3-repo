@@ -27,7 +27,7 @@
 
 // TODO: insert other include files here
 // TODO: insert other definitions and declarations here
-int zbrun;
+int volatile zbrun;
 
 void configPines(void);
 void delayShowResult();
@@ -79,16 +79,16 @@ uint8_t lecturaPines(){
 }
 
 void configPines(){
-    LPC_PINCON -> PINSEL0 &= ~(0xFFF);	//GPIO en los primeros 6 pines
+    LPC_PINCON -> PINSEL0 &= ~(0x3FFF);	//GPIO en los primeros 6 pines
     LPC_PINCON -> PINMODE0 |= (0x3F);   //pull down res en los primeros 3 pines - logica positiva
     LPC_GPIO0 -> FIODIR &= ~(0x7);		//entrada en los primeros 3 pines
-    LPC_GPIO0 -> FIODIR |= (0b111 << 3);	//salida en los segundos 3 pines
+    LPC_GPIO0 -> FIODIR |= (0b111 << 4);	//salida en los segundos 3 pines
 }
 
 void ledResultado(int x){
-	LPC_GPIO0 -> FIOSET = (1 << 4+x);
+	LPC_GPIO0 -> FIOSET = (1 << 5+x);
 	delayShowResult();
-	LPC_GPIO0 -> FIOCLR = (1 << 4+x);
+	LPC_GPIO0 -> FIOCLR = (1 << 5+x);
 }
 
 void delayShowResult(){
