@@ -1,26 +1,6 @@
 
 ---
 
-- [[#Bloques lógicos|Bloques lógicos]]
-- [[#Números|Números]]
-- [[#Funciones|Funciones]]
-- [[#Interrupciones|Interrupciones]]
-- [[#Registros|Registros]]
-	- [[#Registros#Control de pines|Control de pines]]
-	- [[#Registros#Control de Interrupciones por GPIO|Control de Interrupciones por GPIO]]
-	- [[#Registros#Control del Módulo Systick|Control del Módulo Systick]]
-	- [[#Registros#Control del Módulo TIMER|Control del Módulo TIMER]]
-	- [[#Registros#Control del Módulo ADC|Control del Módulo ADC]]
-- [[#Configuración de Puertos a Nivel de Hardware|Configuración de Puertos a Nivel de Hardware]]
-	- [[#Configuración de Puertos a Nivel de Hardware#PINSEL (Pin Function Select register)|PINSEL (Pin Function Select register)]]
-	- [[#Configuración de Puertos a Nivel de Hardware#PINMODE (Pin Mode Select register)|PINMODE (Pin Mode Select register)]]
-	- [[#Configuración de Puertos a Nivel de Hardware#PINMODE_OD (Open Drain Pin Mode Select register)|PINMODE_OD (Open Drain Pin Mode Select register)]]
-- [[#Configuración de Puertos a Nivel de Software|Configuración de Puertos a Nivel de Software]]
-	- [[#Configuración de Puertos a Nivel de Software#Registros FIO|Registros FIO]]
-	- [[#Configuración de Puertos a Nivel de Software#Configuración de Interrupciones por GPIO|Configuración de Interrupciones por GPIO]]
-- [[#NVIC functions|NVIC functions]]
-- [[#Librerías|Librerías]]
-- [[#Repositorios|Repositorios]]
 
 
 - [Bloques lógicos](#Bloques%20l%C3%B3gicos)
