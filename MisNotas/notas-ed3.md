@@ -155,12 +155,6 @@ void SysTick_IRQHandler(void)
 >fuente:	librería:	CMSISv2p00_LPC17xx
 
 >Por Favor ver antes los registros en el MANUAL DE USUARIO, este es solo un resúmen esquemático
-
-## Contenidos 
-- [Underline](#custom-id)
-- [Registros](#indent)
-- [Center](#Interrupciones)
-- [Color](#Registros)
 ## Control de pines 
 
 >Revisar manual de Usuario para ver mapeo de pines en los registros
