@@ -1,19 +1,19 @@
-- [[#Registros|Registros]]
-	- [[#Registros#Control de pines|Control de pines]]
-		- [[#Control de pines#Configuración a nivel de hardware|Configuración a nivel de hardware]]
-			- [[#Configuración a nivel de hardware#Registros por Puerto:|Registros por Puerto:]]
-		- [[#Control de pines#Configuracion a nivel de software|Configuracion a nivel de software]]
-			- [[#Configuracion a nivel de software#Registros FIO|Registros FIO]]
-	- [[#Registros#Control de Interrupciones por GPIO|Control de Interrupciones por GPIO]]
-		- [[#Control de Interrupciones por GPIO#Registros GPIO Interrupt|Registros GPIO Interrupt]]
-		- [[#Control de Interrupciones por GPIO#Registros External Interrupt|Registros External Interrupt]]
-	- [[#Registros#Control del Módulo Systick|Control del Módulo Systick]]
-		- [[#Control del Módulo Systick#Registros SysTick|Registros SysTick]]
-	- [[#Registros#Control del Módulo TIMER|Control del Módulo TIMER]]
-		- [[#Control del Módulo TIMER#Registros de Timer|Registros de Timer]]
-	- [[#Registros#Control del Módulo ADC|Control del Módulo ADC]]
-		- [[#Control del Módulo ADC#Registros __System Control__|Registros __System Control__]]
-		- [[#Control del Módulo ADC#Registros ADC|Registros ADC]]
+- [Registros](#registros)
+	- [Control de pines](#control-de-pines)
+		- [Configuración a nivel de hardware](#configuraci%C3%B3n-a-nivel-de-hardware)
+			- [Registros por Puerto:](#registros-por-puerto)
+		- [Configuracion a nivel de software](#configuracion-a-nivel-de-software)
+			- [Registros FIO](#registros-fio)
+	- [Control de Interrupciones por GPIO](#control-de-interrupciones-por-gpio)
+		- [Registros GPIO Interrupt](#registros-gpio-interrupt)
+		- [Registros External Interrupt](#registros-external-interrupt)
+	- [Control del Módulo Systick](#control-del-m%C3%B3dulo-systick)
+		- [Registros SysTick](#registros-systick)
+	- [Control del Módulo TIMER](#control-del-m%C3%B3dulo-timer)
+		- [Registros de Timer](#registros-de-timer)
+	- [Control del Módulo ADC](#control-del-m%C3%B3dulo-adc)
+		- [Registros __System Control__](#registros-system-control)
+		- [Registros ADC](#registros%C2%A0adc)
 
 
 
