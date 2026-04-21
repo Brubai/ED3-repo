@@ -28,9 +28,7 @@
 
 >Por Favor ver antes los registros en el MANUAL DE USUARIO, este es solo un resúmen esquemático
 
-![[Pasted image 20260421022811.png]]
-
-
+![800](Pasted%20image%2020260421022811.png)
 
 
 
@@ -93,8 +91,8 @@ Puntero de estructura por Puerto
 
 `FIOCLR` __Fast GPIO port output Clear register__ 
 
+![800](Pasted%20image%2020260421022937.png)
 
-![[Pasted image 20260421022937.png]]
 
 ## Control de Interrupciones por GPIO
 
@@ -139,8 +137,8 @@ __External Interrupt__
 `EXTMODE` __Mode register__  
 `EXTPOLAR` __Polarity register__ 
 
-![[Pasted image 20260421023039.png]]
 
+![800](Pasted%20image%2020260421023039.png)
 
 ## Control del Módulo Systick
 
@@ -178,7 +176,7 @@ Su lectura devuelve el valor del Contador en el momento
 `CALIB` __Calibration__ (23 bits)   
 está inicializado por el código de Boot con un valor de fábrica para generar una interrupción cada 10 milisegundos con un clock de 100 MHz     
 
-![[Pasted image 20260421023137.png]]
+![800](Pasted%20image%2020260421023137.png)
 
 ## Control del Módulo TIMER
 
@@ -249,7 +247,7 @@ Stop on match-3:0 — `TC` y `PC` se detendrán y en __Timer Control Register__ 
 	- `10` => Setea a `1` el bit/output-EMm correspondiente
 	- `11` => Togglea el bit/output-EMm correspondiente
 
-![[Pasted image 20260421023206.png]]
+![800](Pasted%20image%2020260421023206.png)
 
 ## Control del Módulo ADC
 
