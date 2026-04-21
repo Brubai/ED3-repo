@@ -1,8 +1,27 @@
+- [Bloques lógicos](#Bloques%20l%C3%B3gicos)
+- [Números](#N%C3%BAmeros)
+- [Funciones](#Funciones)
+- [Interrupciones](#Interrupciones)
+- [Registros](#Registros)
+	- [Control de pines](#Control%20de%20pines)
+	- [Control de Interrupciones por GPIO](#Control%20de%20Interrupciones%20por%20GPIO)
+	- [Control del Módulo Systick](#Control%20del%20M%C3%B3dulo%20Systick)
+	- [Control del Módulo TIMER](#Control%20del%20M%C3%B3dulo%20TIMER)
+	- [Control del Módulo ADC](#Control%20del%20M%C3%B3dulo%20ADC)
+- [Configuración de Puertos a Nivel de Hardware](#Configuraci%C3%B3n%20de%20Puertos%20a%20Nivel%20de%20Hardware)
+	- [PINSEL (Pin Function Select register)](#PINSEL%20(Pin%20Function%20Select%20register))
+	- [PINMODE (Pin Mode Select register)](#PINMODE%20(Pin%20Mode%20Select%20register))
+	- [PINMODE_OD (Open Drain Pin Mode Select register)](#PINMODE_OD%20(Open%20Drain%20Pin%20Mode%20Select%20register))
+- [Configuración de Puertos a Nivel de Software](#Configuraci%C3%B3n%20de%20Puertos%20a%20Nivel%20de%20Software)
+	- [Registros FIO](#Registros%20FIO)
+	- [Configuración de Interrupciones por GPIO](#Configuraci%C3%B3n%20de%20Interrupciones%20por%20GPIO)
+- [NVIC functions](#NVIC%20functions)
+- [Librerías](#Librer%C3%ADas)
+- [Repositorios](#Repositorios)
 
----
 
 # Bloques lógicos
-Core
+Core 
 - DMA - (Direct Memory Access)
 - MPU - (Memory Protection Unit)
 - ITM - (Instrumentation Trace Macrocell)
@@ -135,7 +154,10 @@ void SysTick_IRQHandler(void)
 }
 ```
 
+^c69d58
+
 ---
+
 
 # Interrupciones 
 - Representan un número del enum definido en el archivo LPC17xx.h, como tipo IRQn
@@ -147,6 +169,7 @@ void SysTick_IRQHandler(void)
 
 ---
 
+
 # Registros 
 
 >Se listan los nombres de los miembros de las estructuras, podemos acceder a ellos con el operador `->` sobre el puntero de la estructura
@@ -155,125 +178,165 @@ void SysTick_IRQHandler(void)
 >fuente:	librería:	CMSISv2p00_LPC17xx
 
 >Por Favor ver antes los registros en el MANUAL DE USUARIO, este es solo un resúmen esquemático
-## Control de pines 
 
->Revisar manual de Usuario para ver mapeo de pines en los registros
+---
+## <u> Control de pines </u> 
 
->Revisar manual de Usuario para ver todos los registros 
+> [!warning] Revisar manual de Usuario para ver mapeo de pines en los registros  
+>  Revisar manual de Usuario para ver todos los registros 
 > - PINSEL0:PINSEL9 (5 puertos mitad alta y mitad baja)* => Cada pin se controla con 2 bits
 > - PINMODE0:PINMODE9 (5 puertos mitad alta y mitad baja)* => Cada pin se controla con 2 bits
 > - PINMODE_OD0 (5 puertos) => Cada pin se controla con 1 bit
-> - LPC_GPIO0:LPC_GPIO4 (5 puertos) => Cada pin se controla con 1 bit para todos los Registros de la Estructura
-
+> - LPC_GPIO0 - LPC_GPIO4 (5 puertos) => Cada pin se controla con 1 bit para todos los Registros de la Estructura  
 > - \* no todos los registros son completamente accesibles, habrá registros, pines y bits reservados
+---
+### Configuración a nivel de hardware 
 
-- ### Configuración a nivel de hardware 
+Puntero de estructura para configuración de pines:  
+`LPC_PINCON ->` __Pin Connect__
 
-	- #### Puntero de estructura para configuración de pines `LPC_PINCON`
-		- `LPC_PINCON ->` __Pin Connect__
-
-	- Registros por Puerto
-		
-		- `PINSEL0` __Pin Select-0__ 
-		  >Puerto 0 mitad baja - Selección de función de cada pin -> 2 bits por pin (`PINSEL9` : `PINSEL0`) -> dos registros por puerto (Mitad Alta y Baja)
-		
-		- `PINMODE0` __Pin Mode-0__ 
-		  >Puerto 0 mitad baja - Modo de entrada de cada pin -> 2 bits por pin (`PINMODE9` : `PINMODE0`) -> dos registros por puerto (Mitad Alta y Baja)
-		
-		- `PINMODE_OD0` __Pin Mode-OpenDrain-0__ 
-		  >Puerto 0 - Modo Open drain de cada pin (`PINMODE_OD4` : `PINMODE_OD0`) -> un registro por puerto
-
-- ### Configuracion a nivel de software
-
-	- #### Puntero de estructura por Puerto  `LPC_GPIO0`
-		- `LPC_GPIO0 ->` __General Purpose Input/Output Port-0__ 
-		  >  (`LPC_GPIO4 : LPC_GPIO0`) Para cada puerto, están los siguientes registros:
-
-	- `FIODIR` __Fast GPIO Port Direction control register__
-
-	- `FIOMASK` __Fast Mask register for port__
-
-	- `FIOPIN` __Fast GPIO port Pin value register__
-
-	- `FIOSET` __Fast GPIO port output Set register__
-
-	- `FIOCLR` __Fast GPIO port output Clear register__
-
-
-
-## Control de Interrupciones por GPIO
-
-- ### Puntero base de estructura `LPC_GPIOINT` :
-	- `LPC_GPIOINT ->` __General Purpose Input/Output Interrution__
-
-- __Enable Register for GPIO Interrupt__ - for port 0 and 2 - for Rising and Falling edge
-	- `IO0IntEnR`
-	- `IO2IntEnR`
-	- `IO0IntEnF`
-	- `IO2IntEnF`
-
-- __Status Register for GPIO Interrupt__ - for port 0 and 2 - for Rising and Falling edge
-	- `IO0IntStatR`
-	- `IO2IntStatR`
-	- `IO0IntStatF`
-	- `IO2IntStatF`
-
-- __Clear Register for GPIO Interrupt__ - for port 0 and 2
-	- `IO0IntClr`
-	- `IO2IntClr`
-
-- __Overall Status Register for GPIO Interrupt__
-	- `IOIntStatus`
-
-- __External Interrupt__
-	- `EXTINT` __Flag register__
-	- `EXTMODE` __Mode register__
-	- `EXTPOLAR` __Polarity register__
-
-## Control del Módulo Systick
-
-- ### Puntero a base de estructura `Systick`
-	- `Systick ->` System Timer
-
-- System Timer Registers
-	- `CTRL` __Control and Status__
-		- bit-0 - ENABLE -  Habilitar el contador
-		- bit-1 - TICKINT - Habilitar el interrupt del contador
-		- bit-2 - CLKSOURCE - Selección de la fuente del clock 
-		- bit-16 - COUNTFLAG - Bandera del contador cuando llega a `0` 
-		  Se limpia autom. a  `0` cuando se lee el registro
-
-	- `LOAD` __Reload Value__ (23 bits) - El valor que será cargado en el Timer cuando llega a `0` 
-	- `VAL` __Current Value__ (23 bits) - Su lectura devuelve el valor del Contador en el momento
-	- `CALIB` __Calibration__ (23 bits) 
-	  está inicializado por el código de Boot con un valor de fábrica para generar una interrupción cada 10 milisegundos con un clock de 100 MHz 
-
-## Control del Módulo TIMER
-
-- ### Puntero a la base de la estructura `LPC_TIM0` : 
-	- `LPC_TIM0->` Timer 0 
-	  > (`LPC_TIM0 - LPC_TIM3`) Hay 4 Timers, cada uno contiene los siguientes registros:
 ---
 
-- `CTCR` __Count Control Register__ 
-  selects between Timer and Counter mode, and in Counter mode selects the signal and edge(s) for counting.
-	- bit-1:0		- Counter/Timer mode
-	- bit-3:2		- Count Input Select 
-	  >Cual pin CAP-TURE es muestreado como reloj 
+#### Registros por Puerto: 
 
-- `PR` __Prescale Register__ 
+ `PINSEL0` __Pin Select-0__  
+  Puerto 0 mitad baja - Selección de función de cada pin -> 2 bits por pin (`PINSEL9` : `PINSEL0`) -dos registros por puerto (Mitad Alta y Baja)  
+  
+ `PINMODE0` __Pin Mode-0__  
+  Puerto 0 mitad baja - Modo de entrada de cada pin -> 2 bits por pin (`PINMODE9` : `PINMODE0`) -> dos registros por puerto (Mitad Alta y Baja)  
+  
+ `PINMODE_OD0` __Pin Mode-OpenDrain-0__  
+  Puerto 0 - Modo Open drain de cada pin (`PINMODE_OD4` : `PINMODE_OD0`) -> un registro por puerto
+  
+---
+
+### Configuracion a nivel de software
+
+---
+
+#### Puntero de estructura por Puerto  
+`LPC_GPIO0 ->` __General Purpose Input/Output Port-0__ 
+(`LPC_GPIO4 : LPC_GPIO0`) Para cada puerto, están los siguientes registros:
+
+---
+
+#### Registros FIO
+
+`FIODIR` __Fast GPIO Port Direction control register__
+
+`FIOMASK` __Fast Mask register for port__
+
+`FIOPIN` __Fast GPIO port Pin value register__
+
+`FIOSET` __Fast GPIO port output Set register__
+
+`FIOCLR` __Fast GPIO port output Clear register__
+
+---
+
+## <u> Control de Interrupciones por GPIO </u>
+
+---
+
+### Puntero base de estructura:
+
+`LPC_GPIOINT ->` __General Purpose Input/Output Interrution__
+
+---
+
+### Registros GPIO Interrupt
+
+__Enable Register for GPIO Interrupt__ - for port 0 and 2 - for Rising and Falling edge  
+`IO0IntEnR`  
+`IO2IntEnR`   
+`IO0IntEnF`  
+`IO2IntEnF`  
+
+__Status Register for GPIO Interrupt__ - for port 0 and 2 - for Rising and Falling edge  
+`IO0IntStatR`  
+`IO2IntStatR`  
+`IO0IntStatF`  
+`IO2IntStatF`  
+
+__Clear Register for GPIO Interrupt__ - for port 0 and 2  
+`IO0IntClr`  
+`IO2IntClr`  
+
+__Overall Status Register for GPIO Interrupt__  
+`IOIntStatus`  
+
+---
+
+### Registros External Interrupt
+
+__External Interrupt__  
+`EXTINT` __Flag register__  
+`EXTMODE` __Mode register__  
+`EXTPOLAR` __Polarity register__
+
+---
+
+## 1. <u>Control del Módulo Systick</u>
+
+---
+
+### Puntero a base de estructura `Systick`
+   `Systick ->` System Timer
+
+---
+
+### Registros SysTick
+System Timer Registers  
+
+`CTRL` __Control and Status__   
+- *bit-0*  
+  ENABLE — Habilitar el contador  
+- *bit-1*  
+  TICKINT — Habilitar el interrupt del contador  
+- *bit-2*  
+  CLKSOURCE — Selección de la fuente del clock   
+- *bit-16*  
+  COUNTFLAG — Bandera del contador cuando llega a `0`   
+  Se limpia autom. a  `0` cuando se lee el registro   ^2ebe4a
+
+---
+
+`LOAD` __Reload Value__ (23 bits)  — El valor que será cargado en el Timer cuando llega a `0`   
+`VAL` __Current Value__ (23 bits) — Su lectura devuelve el valor del Contador en el momento  
+`CALIB` __Calibration__ (23 bits)   
+está inicializado por el código de Boot con un valor de fábrica para generar una interrupción cada 10 milisegundos con un clock de 100 MHz    
+
+---
+
+## <u>Control del Módulo TIMER</u>
+
+---
+
+### Puntero a la base de la estructura `LPC_TIM0` : 
+`LPC_TIM0->` Timer 0   
+(`LPC_TIM0 - LPC_TIM3`) Hay 4 Timers, cada uno contiene los siguientes registros: 
+
+---
+
+`CTCR` __Count Control Register__  
+selects between Timer and Counter mode, and in Counter mode selects the signal and edge(s) for counting.  
+- *bit-1:0* — Counter/Timer mode  
+- *bit-3:2* — Count Input Select   
+  Selecciona qué pin CAP-TURE es muestreado como reloj 
+
+`PR` __Prescale Register__ 
   Maximum value for the _Prescale Counter_ (`PC`) 
 
-- `TCR` __Timer Control Register__ 
+`TCR` __Timer Control Register__ 
   Contiene los bits Counter Enable y Counter Reset
 
-- `IR` __Interrupt Register__ 
+`IR` __Interrupt Register__ 
   Flags de las interrupciones Match y Capture. - Escribir `1` en sus bits baja la bandera
 
 ---
 
 - `MR0` __Match Register 0__ (`MR0 - MR3`)
-  > Cada Timer tiene 4 registros Match. 
+ >  - Cada Timer tiene 4 registros Match. 
   > - El March Register es el valor comparado constantemente con el valor en __Timer counter__ (`TC`) 
   > - Cuando ambos sean iguales se dispara una acción 
   > - las acciones son controladas con el __Match Control Register__ (`MCR`)
@@ -299,38 +362,37 @@ void SysTick_IRQHandler(void)
 - `EMR` __External Match Register__ provides control and status of the external match pins
 
 	- *bit-3:0 - EMm*
-	  > EMm - External Match match-3:0 - Este bit puede escribirse en el pin con la función MATn.m (n=timer-3:0 y m=match-3:0) seleccionada en `PINSEL` - Realiza la funcionalidad seleccionada con los dos bits EMCm
+	  EMm - External Match match-3:0 - Este bit puede escribirse en el pin con la función MATn.m (n=timer-3:0 y m=match-3:0) seleccionada en `PINSEL` - Realiza la funcionalidad seleccionada con los dos bits EMCm
 	
 	- *bit-11:4 - EMCm*
-
-		>External Match Control match-3:0 - Determina la funcionalidad (una de cuatro) del bit External Match m (EMm), controlando qué acción realiza el bit cuando sucede un match entre `TC` y `MRm`
-		>- `00` => No hacer nada
-		>- `01` => Limpia a `0` el bit/output-EMm correspondiente 
-		>- `10` => Setea a `1` el bit/output-EMm correspondiente
-		>- `11` => Togglea el bit/output-EMm correspondiente
+	  External Match Control match-3:0 - Determina la funcionalidad (una de cuatro) del bit External Match m (EMm), controlando qué acción realiza el bit cuando sucede un match entre `TC` y `MRm`
+		- `00` => No hacer nada
+		- `01` => Limpia a `0` el bit/output-EMm correspondiente 
+		- `10` => Setea a `1` el bit/output-EMm correspondiente
+		- `11` => Togglea el bit/output-EMm correspondiente
 
 
 ---
 
 ## Control del Módulo ADC
 
-- ### Puntero a base de la estructura __System Control__
-	- `LPC_SC ->` __System Control__
+### Puntero a base de la estructura __System Control__ ^823235
+`LPC_SC ->` __System Control__
 
-- `PCONP` __Power Control for Peripherals__
-	- *bit-12 - PCADC* 
+`PCONP` __Power Control for Peripherals__
+	*bit-12 - PCADC* 
 	   A/D power/clock control 
 
-- `PCLKSEL0` __Peripheral Clock Selection__ 
-	- *bit-25:24 - PCLK_ADC*
+`PCLKSEL0` __Peripheral Clock Selection__ 
+	*bit-25:24 - PCLK_ADC*
 	  Peripheral Clock for ADC
 
 ---
 
-- ### Puntero a base de la estructura __Analog to Digital Converter__
+### Puntero a base de la estructura __Analog to Digital Converter__
 	- `LPC_ADC->` __Analog to Digital Converter__
 
-- `ADCR` __A/D Control Register__
+- `ADCR` __A/D Control Register__ 
 	- *bit-7:0 - SEL*
 	  Selección de los 8 canales del ADC - pines que van a ser muestreados y convertidos
 	- *bit-15:8 - CLKDIV*
@@ -364,6 +426,7 @@ void SysTick_IRQHandler(void)
 	- `LPC_PINCON->PINSELn` 
 	  Cambiar función de pin a ADn con `PINSEL`
 	- `LPC_PINCON->PINMODEn` Cambiar modo de pin a "Flotante" o "Tristate" sin resistencia de pull-Up o pull-Down => `10` en `PINMODE`
+
 
 
 # Configuración de Puertos a Nivel de Hardware
@@ -440,6 +503,7 @@ PINMODE_OD0		// Puerto 0
 0	// Normal mode - not open drain
 1	// Open drain mode
 ```
+
 
 # Configuración de Puertos a Nivel de Software
 
@@ -626,3 +690,6 @@ system_LPC17xx.c
 
 ```c
 ```
+
+^9236ff
+
