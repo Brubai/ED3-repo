@@ -1,0 +1,432 @@
+- [Bloques lógicos](#bloques-l%C3%B3gicos)
+- [Números](#n%C3%BAmeros)
+- [Funciones](#funciones)
+- [Interrupciones](#interrupciones)
+- [Configuración de Puertos a Nivel de Hardware](#configuraci%C3%B3n-de-puertos-a-nivel-de-hardware)
+	- [PINSEL (Pin Function Select register)](#pinsel-pin-function-select-register)
+	- [PINMODE (Pin Mode Select register)](#pinmode-pin-mode-select-register)
+	- [PINMODE_OD (Open Drain Pin Mode Select register)](#pinmode_od-open-drain-pin-mode-select-register)
+- [Configuración de Puertos a Nivel de Software](#configuraci%C3%B3n-de-puertos-a-nivel-de-software)
+	- [Registros FIO](#registros-fio)
+	- [Configuración de Interrupciones por GPIO](#configuraci%C3%B3n-de-interrupciones-por-gpio)
+- [NVIC functions](#nvic-functions)
+- [Librerías](#librer%C3%ADas)
+- [Repositorios](#repositorios)
+
+
+# Bloques lógicos
+Core 
+- DMA - (Direct Memory Access)
+- MPU - (Memory Protection Unit)
+- ITM - (Instrumentation Trace Macrocell)
+- PLL - (Phase-Locked Loop)
+- WIC - (Wake-up Interrupt Controller)
+- SCS - (System Control Space)
+- NVIC - (Nested Vectored Interrupt Controller)
+- SCB - (System Control Block)
+- Systick Timer - (System Tick Timer)
+
+Core outside - periféricos
+- GPIO - (General Purpose Input/Output)
+- TIMER0
+- ADC
+
+Otras definiciones
+- CMSIS - (Cortex Microcontroller Software Interface Standard)
+- NMI - (Non-Maskable Interrupt)
+- IRQ - (Interrupt Request)
+- EXTI - (External Interrupt)
+- PWM - (Pulse Width Modulation)
+
+# Números
+- La LPC1769 cuenta con 4 Timers de 32 bits
+
+- La LPC1769 cuenta con un solo bloque conversor AD0CR
+	- presenta una tasa de conversion de 12-bit
+	- frecuencia máxima de muestreo de 200 KHz
+	- 8 canales de entrada
+	- Las conversiones se realizan en 64 ciclos de reloj en modo de Disparo continuo - Ráfaga -> frecuencia de trabajo del ADC de 12,5 MHz
+	- Si está en modo Controlado por algun Trigger, las conversiones se realizan en 65 ciclos de reloj -> frecuencia de trabajo del ADC de 13 MHz
+	
+
+---
+# Funciones
+```c
+#ifdef __USE_CMSIS
+#include "LPC17xx.h"
+#endif
+#include <stdio.h>
+
+void cfgGPIO(void);
+void cfgIntExt(void);
+void cfgSysTick(void);
+
+int main(void)
+{
+	cfgGPIO();
+	cfgIntExt();
+	cfgSysTick();
+	while(1){};
+    return 0 ;
+}
+
+void cfgGPIO(void)
+{
+	//...
+	return;
+}
+
+void cfgIntGPIO(void)
+{
+	// P0.15 - Habilitar Interrupcion - Rising Edge
+	LPC_GPIOINT->IO0IntEnR |= (1<<15);
+	
+	// P0.15 - Limpiar flag
+	LPC_GPIOINT->IO0IntClr |= (1<<15);
+	
+	// Prioridad - 1 - Interr Externa EINT3
+	NVIC_SetPriority(EINT3_IRQn,1);
+	
+	// Habilitar Interr - EINT3
+	NVIC_EnableIRQ(EINT3_IRQn);
+	
+	return;
+}
+
+void cfgIntExt(void)
+{
+	
+}
+
+void cfgSysTick(void)
+{
+	/* 	Algunos ejercicios piden 
+			- sacar la señal de systick por un pin como salida
+			- Setear una prioridad 
+			- pasar valores por parámetro de función, para LOAD y CTRL
+	*/
+	// LPC_GPIO0->FIOSET |= (1<<22);
+
+	// Valor del registro RELOAD - numero de cuentas max de 12 bits
+	SysTick->LOAD = nticks_1ms;
+
+	// Valor del registro de contador actual - generalmente se asigna 0
+	SysTick->VAL = 0;
+
+	// Registro de control de SysTick - Habilitar contador - Habilitar interrupt - CPU clock como fuente de reloj
+	SysTick->CTRL |= (7<<0);
+	
+	// Prioridad - 1 - Interr de Systick
+	NVIC_SetPriority(SysTick_IRQn, 1);
+	
+	return;
+}
+
+void EINT0_IRQHandler(void)
+{
+	// Consulta si hay una interrupción pendiente - en el puerto 0
+	if (LPC_GPIOINT->IntStatus & (1<<0))
+	{
+		// Consulta si ocurrió una interrupción - en el pin 15
+		if (LPC_GPIOINT->IO0IntStatR & (1<<15))
+		{
+			// servicio de interrupción
+
+			// Limpiar flag al terminar el servicio
+			LPC_GPIOINT->IO0IntClr |= (1<<15);
+		}
+	}
+
+	return;
+}
+void SysTick_IRQHandler(void)
+{
+	// Linea que recomienda poner el fabricante - antes de terminar el handler del SysTick
+	SysTich->CTRL &= Systick->CTRL;
+
+	return;
+}
+```
+
+^c69d58
+
+---
+
+
+# Interrupciones 
+- Representan un número del enum definido en el archivo LPC17xx.h, como tipo IRQn
+	- EINT0_IRQn
+	- EINT1_IRQn
+	- EINT2_IRQn
+	- EINT3_IRQn
+	- SysTick_IRQn
+
+---
+
+
+[[Registros]]
+
+# Configuración de Puertos a Nivel de Hardware
+
+```c
+// puntero a estructura
+LPC_PINCON ->
+```
+```c
+// miembros que usamos
+PINSEL0		// Puerto 0 l
+PINSEL1 	// Puerto 0 h
+PINSEL2 	// Puerto 1 l
+PINSEL3 	// Puerto 1 h
+PINSEL4 	// Puerto 2 l
+PINSEL7 	// Puerto 3 h
+PINSEL9 	// Puerto 4 h
+
+PINMODE0	// Puerto 0 l
+PINMODE1	// Puerto 0 h
+PINMODE2	// Puerto 1 l
+PINMODE3	// Puerto 1 h
+PINMODE4	// Puerto 2 l
+PINMODE7	// Puerto 3 h
+PINMODE9	// Puerto 4 h
+
+PINMODE_OD0		// Puerto 0
+PINMODE_OD1		// Puerto 1
+PINMODE_OD2		// Puerto 2
+PINMODE_OD3		// Puerto 3
+PINMODE_OD4		// Puerto 4
+```
+
+## PINSEL (Pin Function Select register)
+
+: 2 bits para cada pin; Cada pin tiene hasta 4 funciones seleccionables, revisar manual para ver cada funcion
+Cada registro configura hasta 16 pines (mitad baja o alta)
+
+```c
+// Registros
+PINSEL0		// Puerto 0 l
+PINSEL1 	// Puerto 0 h
+// bits value
+00	// Primera funcion - default
+01	// primera funcion alternativa
+10	// segunda funcion alternativa
+11	// tercera funcion alternativa
+```
+
+## PINMODE (Pin Mode Select register)
+
+: Selecciona el modo de entrada de los pines.
+2 bits para cada pin; Revisar manual para saber los pines que controla cada registro - y qué bits están reservados.
+
+```c
+// Registros
+PINMODE0	// Puerto 0 l
+PINMODE1	// Puerto 0 h
+// bits value
+00	// pull-up resistor enabled
+01	// repeater mode enabled
+10	// pull-up and pull-down disabled
+11	// pull-down resistor enabled
+```
+
+## PINMODE_OD (Open Drain Pin Mode Select register)
+
+: Cada bit de estos registros controla el modo de operación OD de un pin de un puerto; Algunos pines están reservados, revisar manual.
+
+```c
+// Registros
+PINMODE_OD0		// Puerto 0
+// bit value
+0	// Normal mode - not open drain
+1	// Open drain mode
+```
+
+
+# Configuración de Puertos a Nivel de Software
+
+```c
+// 5 punteros, corresponden al Puerto 0 - Puerto 4
+// Apuntan a 5 direcciones. En cada dirección se ubica una estructura con el mismo tipo de miembros.
+LPC_GPIO0 ->
+LPC_GPIO1 ->
+LPC_GPIO2 ->
+LPC_GPIO3 ->
+LPC_GPIO4 ->
+```
+```c
+// miembros
+FIODIR		// (Fast GPIO Port Direction control register)
+FIOMASK		// (Fast Mask register for port)
+FIOPIN		// (Fast GPIO port Pin value register)
+FIOSET		// (Fast GPIO port output Set register)
+FIOCLR 		// (Fast GPIO port output Clear register)
+```
+
+>Estos registros-miembros de estructura se pueden acceder por sus campos de 32bits (word), 16bits (Half word), y 8bits (byte) 
+>```c
+>	FIODIR // 31-0
+>		FIODIRL // 15-0
+>		FIODIRH // 31-16
+>			FIODIR0 // 7-0
+>			FIODIR1 // 15-8
+>			FIODIR2 // 23-16
+>			FIODIR3 // 31-24
+>```
+
+## Registros FIO
+
+>Cada pin se controla con 1 bit, de cada uno de estos registros.
+
+FIODIR
+: El registro `FIODIR` (Fast GPIO Port Direction control register)
+controla la dirección de los pines de un puerto. 
+```c 
+0	// pin is input
+1	// pin is output
+``` 
+
+FIOMASK
+: El registro `FIOMASK` (Fast Mask register for port) permite enmascarar los pines de un puerto. Las funciones de los registros `FIOPIN`, `FIOSET`, `FIOCLR`, solo alteraran al pin del puerto cuando el registro `FIOMASK` tiene un valor de cero para ése pin. En el caso contrario, las lectura del pin devolverá cero sin importar su estado; Y la escritura no afectará el estado del pin.
+```c
+0	// pin is not masked
+1	// pin is masked
+``` 
+
+FIOPIN
+: El registro `FIOPIN` (Fast GPIO port Pin value register) permite a traves de sus bits obtener el estado del pin en el caso que el pin se encuentre como entrada; Y define el estado del pin si se encuentra configurado como salida.
+```c
+// pin configurado como entrada
+0	// se encuentra en estado bajo
+1	// se encuentra en estado alto
+// pin configurado como salida
+0	// se escribe un 0
+1	// se escribe un 1
+```
+
+FIOSET
+: El registro `FIOSET` (Fast GPIO port output Set register) permite a traves de sus bits, establecer el estado alto `1` de los pines del puerto
+```c
+// Si el pin tiene 0 en el registro FIOMASK y está configurado como salida:
+0	// pin output is unchanged
+1	// pin output is set to HIGH
+```
+
+FIOCLR
+: El registro `FIOCLR` (Fast GPIO port output Clear register) permite a traves de sus bits, establecer el estado bajo `0` de los pines del puerto
+```c
+// Si el pin tiene 0 en el registro FIOMASK y está configurado como salida:
+0	// pin output is unchanged
+1	// pin output is set to LOW
+```
+
+## Configuración de Interrupciones por GPIO
+
+Registro IO0IntEnR (GPIO Interrupt Enable for port 0 Rising Edge)
+Registro IO2IntEnR (GPIO Interrupt Enable for port 2 Rising Edge)
+Registro IO0IntEnF (GPIO Interrupt Enable for port 0 Falling Edge)
+Registro IO2IntEnF (GPIO Interrupt Enable for port 2 Falling Edge)
+Registro IO0IntStatR (GPIO Interrupt Status for port 0 Rising Edge Interrupt)
+Registro IO2IntStatR (GPIO Interrupt Status for port 2 Rising Edge Interrupt)
+Registro IO0IntStatF (GPIO Interrupt Status for port 0 Falling Edge Interrupt)
+Registro IO2IntStatF (GPIO Interrupt Status for port 2 Falling Edge Interrupt)
+Registro IO0IntClr (GPIO Interrupt Clear register for port 0)
+Registro IO2IntClr (GPIO Interrupt Clear register for port 2)
+Registro IOIntStatus (GPIO overall Interrupt Status register)
+Registro EXTINT (External Interrupt Flag register)
+Registro EXTMODE (External Interrupt Mode register)
+Registro EXTPOLAR (External Interrupt Polarity register)
+
+
+- External Interrupt
+
+	- `EXTINT` Flag register
+
+		- [3,0] bits [EINT3,EINT0] se ponen en `1` si 
+			- se selecciono la funcion `EINTX` en el pin 
+				- y en level-sensitive mode - el pin está en su estado activo seleccionado
+					- activo por `ALTO` o por `BAJO`
+				- o en edge-sensitive mode - si el flanco seleccionado sucedió en el pin
+
+		- Se limpia la flag por bit escribiendoles un `1`
+
+	- `EXTMODE` Mode register
+		- [3,0] bits
+			- `0` Level-sensibility is selected for `EINTX`
+			- `1` `EINTX` is edge sensitive
+
+	- `EXTPOLAR` Polarity register
+		- [3,0] bits
+			- `0` low-active - or - falling-edge sensitive
+			- `1` high-active - or - rising-edge sensitive
+
+# NVIC functions
+```c
+NVIC_SetPriorityGrouping(uint32_t PriorityGroup)
+
+NVIC_GetPriorityGrouping(void)
+
+NVIC_EnableIRQ(IRQn_Type IRQn)
+
+NVIC_DisableIRQ(IRQn_Type IRQn)
+
+NVIC_GetPendingIRQ(IRQn_Type IRQn)
+
+NVIC_SetPendingIRQ(IRQn_Type IRQn)
+
+NVIC_ClearPendingIRQ(IRQn_Type IRQn)
+
+NVIC_GetActive(IRQn_Type IRQn)
+
+NVIC_SetPriority(IRQn_Type IRQn, uint32_t priority)
+
+NVIC_GetPriority(IRQn_Type IRQn)
+
+NVIC_SystemReset(void)
+
+```
+
+
+
+
+---
+
+# Librerías
+
+system_LPC17xx.c
+* core_cm3.h
+
+# Repositorios
+- <https://github.com/dariocastillo11/digital-3>
+- Tiene ejemplos con CMSIS
+- Parciales con Drivers
+	- Blinking_LED
+	- Button_one_digit_counter
+	- C-Seminars-master
+	- Display_autocounter
+	- MULTIPLEXADO
+	- PARCIALES - Driver
+	- multiplexadoconsystick
+	- prederle_conentrada
+	- systickPARPADEOCADA5SEGUNDOS
+	- systick_para_servomotor
+
+- <https://github.com/Mati-Costamagna/Electronica-Digital-III>
+- 
+	- Ejercicios de Clases - justo los ejercicios de Migliore ⭐
+	- Practica Primer Parcial ⭐
+
+- <https://github.com/nicopinera/EDIII>
+- Ejemplos de varios profes
+- Ejemplos con CMSIS y Drivers
+- Parciales
+	- 01_Ejercicios_David con CMSIS ⭐
+		- Ejercicios de parcial
+
+- <https://github.com/fabiobritez/digital_electronicsIII>
+- Ejemplos con Drivers
+
+```c
+```
+
+^9236ff
+
